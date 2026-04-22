@@ -1,28 +1,20 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
-import StatsBar from "@/components/landing/StatsBar";
-import HowItWorks from "@/components/landing/HowItWorks";
-import WhyItMatters from "@/components/landing/WhyItMatters";
-import TiersSection from "@/components/landing/TiersSection";
-import DeviceSupport from "@/components/landing/DeviceSupport";
+import CoreCapabilities from "@/components/landing/CoreCapabilities";
+import Workflow from "@/components/landing/Workflow";
 import LeaderboardPreview from "@/components/landing/LeaderboardPreview";
-import IphoneTeaser from "@/components/landing/IphoneTeaser";
-import FAQ from "@/components/landing/FAQ";
+import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#131313] text-[#e2e2e2]">
       <Navbar />
       <HeroSection />
-      <StatsBar />
-      <HowItWorks />
-      <WhyItMatters />
-      <TiersSection />
-      <DeviceSupport />
+      <CoreCapabilities />
+      <Workflow />
       <LeaderboardPreview />
-      <IphoneTeaser />
-      <FAQ />
+      <CTASection />
       <Footer />
     </div>
   );

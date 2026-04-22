@@ -1,87 +1,128 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Trophy, ArrowRight } from "lucide-react";
 
 const leaders = [
-  { rank: 1, initials: "MK", name: "Maria K.", country: "🇧🇷", points: "48,230", tier: "World Scanner", color: "bg-amber-400" },
-  { rank: 2, initials: "JT", name: "Jun T.", country: "🇯🇵", points: "31,540", tier: "Field Agent", color: "bg-cyan-400" },
-  { rank: 3, initials: "AR", name: "Ahmed R.", country: "🇪🇬", points: "24,180", tier: "Field Agent", color: "bg-blue-500" },
-  { rank: 4, initials: "PS", name: "Priya S.", country: "🇮🇳", points: "12,760", tier: "Field Agent", color: "bg-violet-500" },
-  { rank: 5, initials: "LF", name: "Lucas F.", country: "🇫🇷", points: "8,490", tier: "Correspondent", color: "bg-emerald-500" },
+  { rank: 1, initials: "MK", name: "Maria K.", country: "BR", points: 48230, tier: "World Scanner" },
+  { rank: 2, initials: "JT", name: "Jun T.", country: "JP", points: 31540, tier: "Field Agent" },
+  { rank: 3, initials: "AR", name: "Ahmed R.", country: "EG", points: 24180, tier: "Field Agent" },
+  { rank: 4, initials: "PS", name: "Priya S.", country: "IN", points: 12760, tier: "Field Agent" },
+  { rank: 5, initials: "LF", name: "Lucas F.", country: "FR", points: 8490, tier: "Correspondent" },
 ];
 
-const rankStyles: Record<number, string> = {
-  1: "text-amber-400 font-black",
-  2: "text-zinc-300 font-black",
-  3: "text-amber-600 font-black",
+const rankColor: Record<number, string> = {
+  1: "text-amber-400",
+  2: "text-white/60",
+  3: "text-amber-600",
+};
+
+const tierColor: Record<string, string> = {
+  "World Scanner": "text-amber-400",
+  "Field Agent": "text-violet-400",
+  Correspondent: "text-cyan-400",
+  Explorer: "text-green-400",
+  Scout: "text-neutral-500",
 };
 
 export default function LeaderboardPreview() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="leaderboard" className="py-28 px-6 bg-[#0a0a0a] border-t border-white/5">
+    <section ref={ref} className="py-24 md:py-32 px-6 md:px-8 bg-[#131313] border-y border-white/5">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-cyan-400 text-sm font-semibold tracking-widest uppercase mb-4">
-            Community
-          </p>
-          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-            Top World Scanners this month
-          </h2>
+        <div
+          className={`mb-12 border-b border-white/5 pb-6 flex items-end justify-between transition-all duration-700 ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
+          <div>
+            <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/40 mb-2">
+              Community
+            </p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-tighter">
+              Top Scanners
+            </h2>
+          </div>
+          <Link
+            href="/leaderboard"
+            className="hidden sm:flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
+          >
+            View All
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-12 px-6 py-3 border-b border-white/10 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-            <span className="col-span-1">#</span>
-            <span className="col-span-5">Contributor</span>
-            <span className="col-span-3 text-right">Points</span>
-            <span className="col-span-3 text-right">Tier</span>
-          </div>
-
-          {/* Rows */}
+        <div
+          className={`border border-white/10 bg-[#1b1b1b] overflow-hidden transition-all duration-700 ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+          style={{ transitionDelay: "200ms" }}
+        >
           {leaders.map((leader, i) => (
             <div
               key={leader.rank}
-              className={`grid grid-cols-12 items-center px-6 py-4 transition-colors hover:bg-white/5 ${
+              className={`flex items-center gap-4 px-6 py-4 ${
                 i < leaders.length - 1 ? "border-b border-white/5" : ""
-              }`}
+              } hover:bg-white/[0.02] transition-colors`}
             >
-              {/* Rank */}
-              <span className={`col-span-1 text-lg ${rankStyles[leader.rank] ?? "text-zinc-500 font-semibold"}`}>
+              <span
+                className={`w-8 text-center font-mono text-sm ${
+                  rankColor[leader.rank] ?? "text-white/30"
+                }`}
+              >
                 {leader.rank}
               </span>
-
-              {/* Avatar + Name */}
-              <div className="col-span-5 flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-full ${leader.color} flex items-center justify-center text-[#0a0a0a] text-xs font-black flex-shrink-0`}>
-                  {leader.initials}
-                </div>
-                <div>
-                  <p className="text-white text-sm font-semibold">{leader.name}</p>
-                  <p className="text-zinc-600 text-xs">{leader.country}</p>
-                </div>
+              <div className="w-8 h-8 bg-white/10 flex items-center justify-center text-xs font-medium text-white">
+                {leader.initials}
               </div>
-
-              {/* Points */}
-              <span className="col-span-3 text-right text-amber-400 font-bold text-sm">
-                {leader.points}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  {leader.name}
+                </p>
+                <p className="text-[10px] font-mono text-white/30 tracking-wider uppercase">
+                  {leader.country}
+                </p>
+              </div>
+              <span
+                className={`text-[10px] font-mono tracking-wider uppercase hidden sm:block ${
+                  tierColor[leader.tier] ?? "text-neutral-500"
+                }`}
+              >
+                {leader.tier}
               </span>
-
-              {/* Tier */}
-              <span className="col-span-3 text-right">
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-zinc-300 text-xs font-medium">
-                  {leader.tier}
-                </span>
+              <span className="text-sm font-mono text-white text-right">
+                {leader.points.toLocaleString()}
               </span>
             </div>
           ))}
         </div>
 
-        <div className="text-center mt-8">
+        <div className="mt-6 sm:hidden text-center">
           <Link
             href="/leaderboard"
-            className="text-cyan-400 text-sm font-semibold hover:text-cyan-300 transition-colors inline-flex items-center gap-1"
+            className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
           >
             View Full Leaderboard
-            <span>→</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
