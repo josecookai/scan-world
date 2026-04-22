@@ -32,12 +32,7 @@ export default function Workflow() {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
       { threshold: 0.1 }
     );
     observer.observe(el);
@@ -45,59 +40,26 @@ export default function Workflow() {
   }, []);
 
   return (
-    <section
-      ref={ref}
-      className="py-24 md:py-32 px-6 md:px-8 bg-[#0e0e0e] border-y border-white/5"
-    >
+    <section ref={ref} className="py-20 px-8 border-y border-white/5" style={{ background: "#0e0e0e" }}>
       <div className="max-w-6xl mx-auto">
-        <div
-          className={`mb-16 transition-all duration-700 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
-          <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-tighter">
-            The Protocol
-          </h2>
+        <div className={`mb-16 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-tighter" style={{ fontFamily: "var(--font-inter)" }}>The Protocol</h2>
         </div>
 
         <div className="space-y-16">
           {steps.map((step, i) => (
-            <div
-              key={step.num}
-              className={`flex flex-col ${
-                i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-              } gap-8 md:gap-16 items-center border-b border-white/5 pb-16 last:border-0 last:pb-0 transition-all duration-700 ${
-                visible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-6"
-              }`}
-              style={{ transitionDelay: `${i * 150 + 200}ms` }}
-            >
+            <div key={step.num} className={`flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-8 md:gap-16 items-center border-b border-white/5 pb-16 last:border-0 last:pb-0 transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={{ transitionDelay: `${i * 150 + 200}ms` }}>
               <div className="w-full md:w-1/2">
-                <div className="font-mono text-[10px] text-white/30 tracking-[0.2em] uppercase mb-2">
-                  {step.num} / {step.label}
-                </div>
-                <h3 className="text-2xl md:text-3xl font-medium text-white mb-4 uppercase tracking-tight">
-                  {step.title}
-                </h3>
-                <p className="text-base text-[#c4c7c8] leading-relaxed">
-                  {step.desc}
-                </p>
+                <div className="text-[10px] text-white/30 tracking-[0.2em] uppercase mb-2" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{step.num} / {step.label}</div>
+                <h3 className="text-2xl md:text-3xl font-medium text-white mb-4 uppercase tracking-tight" style={{ fontFamily: "var(--font-inter)" }}>{step.title}</h3>
+                <p className="text-base text-[#c4c7c8] leading-relaxed" style={{ fontFamily: "var(--font-inter)" }}>{step.desc}</p>
               </div>
-              <div className="w-full md:w-1/2 aspect-video bg-black/40 border border-white/10 overflow-hidden flex items-center justify-center">
+              <div className="w-full md:w-1/2 aspect-video border border-white/10 overflow-hidden flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)" }}>
                 <div className="text-center">
-                  {i === 0 && (
-                    <Upload className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                  )}
-                  {i === 1 && (
-                    <CheckCircle className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                  )}
-                  {i === 2 && (
-                    <Play className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                  )}
-                  <p className="font-mono text-[10px] text-white/20 tracking-wider uppercase">
-                    {step.label}_PHASE
-                  </p>
+                  {i === 0 && <Upload className="w-12 h-12 text-white/20 mx-auto mb-3" />}
+                  {i === 1 && <CheckCircle className="w-12 h-12 text-white/20 mx-auto mb-3" />}
+                  {i === 2 && <Play className="w-12 h-12 text-white/20 mx-auto mb-3" />}
+                  <p className="text-[10px] text-white/20 tracking-wider uppercase" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{step.label}_PHASE</p>
                 </div>
               </div>
             </div>

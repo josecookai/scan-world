@@ -34,12 +34,7 @@ export default function LeaderboardPreview() {
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
       { threshold: 0.1 }
     );
     observer.observe(el);
@@ -47,82 +42,36 @@ export default function LeaderboardPreview() {
   }, []);
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-6 md:px-8 bg-[#131313] border-y border-white/5">
+    <section ref={ref} className="py-20 px-8 border-y border-white/5" style={{ background: "#131313" }}>
       <div className="max-w-4xl mx-auto">
-        <div
-          className={`mb-12 border-b border-white/5 pb-6 flex items-end justify-between transition-all duration-700 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
+        <div className={`mb-12 border-b border-white/5 pb-6 flex items-end justify-between transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
           <div>
-            <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/40 mb-2">
-              Community
-            </p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-tighter">
-              Top Scanners
-            </h2>
+            <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-2" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>Community</p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-white uppercase tracking-tighter" style={{ fontFamily: "var(--font-inter)" }}>Top Scanners</h2>
           </div>
-          <Link
-            href="/leaderboard"
-            className="hidden sm:flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
-          >
-            View All
-            <ArrowRight className="w-3.5 h-3.5" />
+          <Link href="/leaderboard" className="hidden sm:flex items-center gap-2 text-xs tracking-wider uppercase text-white/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>
+            View All <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div
-          className={`border border-white/10 bg-[#1b1b1b] overflow-hidden transition-all duration-700 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ transitionDelay: "200ms" }}
-        >
+        <div className={`border border-white/10 overflow-hidden transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ background: "#1b1b1b", transitionDelay: "200ms" }}>
           {leaders.map((leader, i) => (
-            <div
-              key={leader.rank}
-              className={`flex items-center gap-4 px-6 py-4 ${
-                i < leaders.length - 1 ? "border-b border-white/5" : ""
-              } hover:bg-white/[0.02] transition-colors`}
-            >
-              <span
-                className={`w-8 text-center font-mono text-sm ${
-                  rankColor[leader.rank] ?? "text-white/30"
-                }`}
-              >
-                {leader.rank}
-              </span>
-              <div className="w-8 h-8 bg-white/10 flex items-center justify-center text-xs font-medium text-white">
-                {leader.initials}
-              </div>
+            <div key={leader.rank} className={`flex items-center gap-4 px-6 py-4 ${i < leaders.length - 1 ? "border-b border-white/5" : ""} hover:bg-white/[0.02] transition-colors`}>
+              <span className={`w-8 text-center text-sm ${rankColor[leader.rank] ?? "text-white/30"}`} style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{leader.rank}</span>
+              <div className="w-8 h-8 flex items-center justify-center text-xs font-medium text-white" style={{ background: "rgba(255,255,255,0.1)" }}>{leader.initials}</div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
-                  {leader.name}
-                </p>
-                <p className="text-[10px] font-mono text-white/30 tracking-wider uppercase">
-                  {leader.country}
-                </p>
+                <p className="text-sm font-medium text-white truncate" style={{ fontFamily: "var(--font-inter)" }}>{leader.name}</p>
+                <p className="text-[10px] text-white/30 tracking-wider uppercase" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{leader.country}</p>
               </div>
-              <span
-                className={`text-[10px] font-mono tracking-wider uppercase hidden sm:block ${
-                  tierColor[leader.tier] ?? "text-neutral-500"
-                }`}
-              >
-                {leader.tier}
-              </span>
-              <span className="text-sm font-mono text-white text-right">
-                {leader.points.toLocaleString()}
-              </span>
+              <span className={`text-[10px] tracking-wider uppercase hidden sm:block ${tierColor[leader.tier] ?? "text-neutral-500"}`} style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{leader.tier}</span>
+              <span className="text-sm text-white text-right" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>{leader.points.toLocaleString()}</span>
             </div>
           ))}
         </div>
 
         <div className="mt-6 sm:hidden text-center">
-          <Link
-            href="/leaderboard"
-            className="inline-flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-white/50 hover:text-white transition-colors"
-          >
-            View Full Leaderboard
-            <ArrowRight className="w-3.5 h-3.5" />
+          <Link href="/leaderboard" className="inline-flex items-center gap-2 text-xs tracking-wider uppercase text-white/50 hover:text-white transition-colors" style={{ fontFamily: "var(--font-space-grotesk), monospace" }}>
+            View Full Leaderboard <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
