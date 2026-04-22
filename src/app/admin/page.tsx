@@ -2,6 +2,8 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 
+export const dynamic = "force-dynamic"
+
 async function getStats() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/api/admin/stats`,
