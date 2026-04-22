@@ -10,6 +10,14 @@ function containsVerificationCode(text: string | null | undefined, code: number)
   return text.includes(`#scanworld${code}`)
 }
 
+/** Normalizes a raw URL to ensure it has a protocol. */
+function normalizeUrl(url: string): string {
+  const trimmed = url.trim()
+  if (!trimmed) return trimmed
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  return `https://${trimmed}`
+}
+
 export async function POST(request: NextRequest) {
   let body: unknown
   try {
@@ -27,11 +35,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ valid: false, error: "Missing url field" }, { status: 400 })
   }
 
-  const url = ((body as Record<string, unknown>).url as string).trim()
+  const rawUrl = ((body as Record<string, unknown>).url as string).trim()
 
-  if (!url) {
+  if (!rawUrl) {
     return NextResponse.json({ valid: false, error: "URL is required" })
   }
+
+  const url = normalizeUrl(rawUrl)
 
   // Fetch the authenticated user's verification code
   const supabase = await createClient()

@@ -7,6 +7,8 @@ import PointsBadge from "@/components/PointsBadge"
 import TierProgress from "@/components/TierProgress"
 import SubmissionCard from "@/components/SubmissionCard"
 
+export const dynamic = "force-dynamic"
+
 const COUNTRIES = [
   { code: "US", name: "United States" },
   { code: "GB", name: "United Kingdom" },

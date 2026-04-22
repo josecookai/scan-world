@@ -4,16 +4,6 @@ import { redirect } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
-async function getStats() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/api/admin/stats`,
-    { cache: "no-store" }
-  )
-  if (!res.ok) return null
-  const json = await res.json()
-  return json.success ? json.data : null
-}
-
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
@@ -30,40 +20,70 @@ export default async function AdminDashboardPage() {
     redirect("/")
   }
 
-  const stats = await getStats()
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+  const todayISO = todayStart.toISOString()
+
+  const [
+    pendingResult,
+    acceptedTodayResult,
+    rejectedTodayResult,
+    totalVideosResult,
+    avgScoreResult,
+  ] = await Promise.all([
+    supabase.from("submissions").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    supabase.from("submissions").select("id", { count: "exact", head: true }).eq("status", "accepted").gte("reviewed_at", todayISO),
+    supabase.from("submissions").select("id", { count: "exact", head: true }).eq("status", "rejected").gte("reviewed_at", todayISO),
+    supabase.from("submissions").select("id", { count: "exact", head: true }),
+    supabase.from("submissions").select("quality_score").eq("status", "accepted").not("quality_score", "is", null),
+  ])
+
+  let avgQualityScore: number | null = null
+  if (avgScoreResult.data && avgScoreResult.data.length > 0) {
+    const total = avgScoreResult.data.reduce((sum, row) => sum + (row.quality_score ?? 0), 0)
+    avgQualityScore = Math.round(total / avgScoreResult.data.length)
+  }
+
+  const stats = {
+    pending_count: pendingResult.count ?? 0,
+    accepted_today: acceptedTodayResult.count ?? 0,
+    rejected_today: rejectedTodayResult.count ?? 0,
+    total_videos: totalVideosResult.count ?? 0,
+    avg_quality_score: avgQualityScore,
+  }
 
   const kpiCards = [
     {
       label: "Pending Submissions",
-      value: stats?.pending_count ?? "—",
+      value: stats.pending_count ?? "—",
       color: "text-yellow-400",
       bg: "bg-yellow-400/5 border-yellow-400/20",
       href: "/admin/review",
     },
     {
       label: "Accepted Today",
-      value: stats?.accepted_today ?? "—",
+      value: stats.accepted_today ?? "—",
       color: "text-green-400",
       bg: "bg-green-400/5 border-green-400/20",
       href: "/admin/submissions",
     },
     {
       label: "Rejected Today",
-      value: stats?.rejected_today ?? "—",
+      value: stats.rejected_today ?? "—",
       color: "text-red-400",
       bg: "bg-red-400/5 border-red-400/20",
       href: "/admin/submissions",
     },
     {
       label: "Total Videos",
-      value: stats?.total_videos ?? "—",
+      value: stats.total_videos ?? "—",
       color: "text-violet-400",
       bg: "bg-violet-400/5 border-violet-400/20",
       href: "/admin/submissions",
     },
     {
       label: "Avg Quality Score",
-      value: stats?.avg_quality_score !== null ? `${stats?.avg_quality_score}/100` : "—",
+      value: stats.avg_quality_score !== null ? `${stats.avg_quality_score}/100` : "—",
       color: "text-cyan-400",
       bg: "bg-cyan-400/5 border-cyan-400/20",
       href: "/admin/submissions",

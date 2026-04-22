@@ -6,6 +6,8 @@ import { User, PointEvent, Submission, UserTier } from "@/types"
 import TierProgress from "@/components/TierProgress"
 import SubmissionCard from "@/components/SubmissionCard"
 
+export const dynamic = "force-dynamic"
+
 const TIER_THRESHOLDS: Record<UserTier, number> = {
   scout: 0,
   explorer: 500,

@@ -13,7 +13,11 @@ export function extractTikTokVideoId(url: string): string | null {
 
 export function isTikTokUrl(url: string): boolean {
   try {
-    const parsed = new URL(url)
+    // Normalize: add https:// if missing so new URL() doesn't throw
+    const normalized = url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`
+    const parsed = new URL(normalized)
     return (
       parsed.hostname === "tiktok.com" ||
       parsed.hostname === "www.tiktok.com" ||

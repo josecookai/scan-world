@@ -87,20 +87,7 @@ export async function POST(request: NextRequest) {
     { cookies: { getAll: () => [], setAll: () => {} } }
   )
 
-  // Check for duplicate
-  const { data: existing } = await serviceClient
-    .from("submissions")
-    .select("id")
-    .eq("video_url", url)
-    .maybeSingle()
-
-  if (existing) {
-    return NextResponse.json(
-      { success: false, error: "This video has already been submitted" },
-      { status: 409 }
-    )
-  }
-
+  // Direct insert — let DB unique constraint catch duplicates
   const { data: submission, error } = await serviceClient
     .from("submissions")
     .insert({
@@ -121,6 +108,13 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (error) {
+    // 23505 = unique_violation (duplicate video_url)
+    if (error.code === "23505") {
+      return NextResponse.json(
+        { success: false, error: "This video has already been submitted" },
+        { status: 409 }
+      )
+    }
     return NextResponse.json(
       { success: false, error: "Failed to save submission" },
       { status: 500 }

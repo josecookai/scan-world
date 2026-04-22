@@ -7,6 +7,8 @@ import { Submission, User } from "@/types"
 import SubmissionReviewCard from "@/components/admin/SubmissionReviewCard"
 import StatusBadge from "@/components/admin/StatusBadge"
 
+export const dynamic = "force-dynamic"
+
 interface SubmissionWithUser extends Submission {
   user?: Pick<User, "username" | "tier" | "points"> & { submission_count?: number }
 }
@@ -30,12 +32,11 @@ function timeAgo(dateStr: string): string {
 let toastCounter = 0
 
 export default function ReviewQueuePage() {
+  const supabase = createClient()
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [loading, setLoading] = useState(true)
   const [toasts, setToasts] = useState<Toast[]>([])
-
-  const supabase = createClient()
 
   function addToast(message: string, type: "success" | "error") {
     const id = ++toastCounter

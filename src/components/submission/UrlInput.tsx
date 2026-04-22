@@ -71,7 +71,15 @@ export default function UrlInput({ value, onChange, onValidated }: UrlInputProps
   )
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
+    let newValue = e.target.value
+    // Auto-prepend https:// if user types a raw domain (no protocol)
+    if (newValue && !newValue.match(/^https?:\/\//i) && newValue.includes(".")) {
+      // Only prepend if it looks like a URL starting with a domain
+      const domainStart = newValue.match(/^[\w-]+\./)
+      if (domainStart) {
+        newValue = `https://${newValue}`
+      }
+    }
     onChange(newValue)
     // Reset state while typing
     if (validationState !== "idle") {

@@ -20,12 +20,31 @@ export async function GET(request: NextRequest) {
   }
 
   if (period === "monthly") {
-    // Filter to users who have had point events this month
+    // Monthly leaderboard: only users who received points this month
     const startOfMonth = new Date()
     startOfMonth.setDate(1)
     startOfMonth.setHours(0, 0, 0, 0)
-    // Monthly leaderboard: filter by users updated this month
-    query = query.gte("updated_at", startOfMonth.toISOString())
+    const startISO = startOfMonth.toISOString()
+
+    // Subquery: get distinct user_ids with point events this month
+    const { data: activeUserIds } = await supabase
+      .from("point_events")
+      .select("user_id")
+      .gte("created_at", startISO)
+    
+    const userIds = activeUserIds?.map((e) => e.user_id) ?? []
+    if (userIds.length > 0) {
+      query = query.in("id", userIds)
+    } else {
+      // No active users this month — return empty
+      const body: ApiResponse<Partial<User>[]> = {
+        success: true,
+        data: [] as Partial<User>[],
+        error: null,
+        meta: { total: 0, period, country: country ?? null },
+      }
+      return Response.json(body)
+    }
   }
 
   const { data, error } = await query

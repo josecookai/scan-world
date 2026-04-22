@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { User } from "@/types"
 
+export const dynamic = "force-dynamic"
+
 type SortKey = "points" | "created_at"
 
 const TIER_COLOR: Record<string, string> = {
@@ -17,6 +19,7 @@ const TIER_COLOR: Record<string, string> = {
 const PAGE_SIZE = 25
 
 export default function UsersPage() {
+  const supabase = createClient()
   const [users, setUsers] = useState<(User & { submission_count?: number })[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(0)
@@ -25,8 +28,6 @@ export default function UsersPage() {
   const [sortKey, setSortKey] = useState<SortKey>("points")
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
   const [userSubmissions, setUserSubmissions] = useState<Record<string, unknown[]>>({})
-
-  const supabase = createClient()
 
   const loadUsers = useCallback(async () => {
     setLoading(true)

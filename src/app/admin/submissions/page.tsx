@@ -7,6 +7,8 @@ import { Submission, User, SubmissionStatus } from "@/types"
 import StatusBadge from "@/components/admin/StatusBadge"
 import SubmissionReviewCard from "@/components/admin/SubmissionReviewCard"
 
+export const dynamic = "force-dynamic"
+
 interface SubmissionWithUser extends Submission {
   user?: Pick<User, "username" | "tier" | "points"> & { submission_count?: number }
 }
@@ -36,6 +38,7 @@ interface Toast {
 let toastCounter = 0
 
 export default function SubmissionsPage() {
+  const supabase = createClient()
   const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(0)
@@ -45,8 +48,6 @@ export default function SubmissionsPage() {
   const [platformFilter, setPlatformFilter] = useState("")
   const [selectedSub, setSelectedSub] = useState<SubmissionWithUser | null>(null)
   const [toasts, setToasts] = useState<Toast[]>([])
-
-  const supabase = createClient()
 
   function addToast(message: string, type: "success" | "error") {
     const id = ++toastCounter

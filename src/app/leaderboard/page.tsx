@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { User } from "@/types"
 import LeaderboardRow from "@/components/LeaderboardRow"
 
+export const dynamic = "force-dynamic"
+
 const COUNTRIES = [
   { code: "", name: "All Countries" },
   { code: "US", name: "United States" },
