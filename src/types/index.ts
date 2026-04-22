@@ -31,6 +31,7 @@ export interface User {
   points: number
   tier: UserTier
   role: "user" | "admin"
+  verification_code: number
   created_at: string
 }
 
